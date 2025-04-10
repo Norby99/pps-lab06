@@ -51,11 +51,7 @@ enum List[A]:
     def partition(predicate: A => Boolean): (List[A], List[A]) = foldRight(Nil(), Nil())((h, t) =>
         if predicate(h) then (h :: t._1, t._2) else (t._1, h :: t._2))
     def span(predicate: A => Boolean): (List[A], List[A]) =
-        var splitted = false
-        val res = foldLeft(Nil(): List[A], Nil(): List[A])((b, a) =>
-            if predicate(a) || !splitted then ({ splitted = true; (a :: b._1, b._2); })
-            else (b._1, a :: b._2))
-        (res._1.reverse(), res._2.reverse())
+        foldLeft((Nil(), Nil()))((b, a) => if predicate(a) && b._2.length() == 0 then (b._1.append(List(a)), b._2) else (b._1, b._2.append(List(a))))
     def takeRight(n: Int): List[A] = foldRight(Nil(): List[A], n)((b, a) => a match
         case (res, 0) => a
         case (res, n) => (b :: a._1, n - 1)
