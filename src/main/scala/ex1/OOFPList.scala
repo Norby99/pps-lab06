@@ -56,7 +56,8 @@ enum List[A]:
         case (res, 0) => a
         case (res, n) => (b :: a._1, n - 1)
     )._1
-    def collect(predicate: PartialFunction[A, A]): List[A] = ???
+    def collect(predicate: PartialFunction[A, A]): List[A] =
+        foldLeft(Nil())((b, a) => if predicate.isDefinedAt(a) then b.append(List(predicate(a))) else b.append(Nil()))
     
     def reverse(): List[A] = foldLeft(Nil())((b, a) => (a :: b))
     
@@ -77,10 +78,10 @@ object Test extends App:
     val reference = List(1, 2, 3, 4)
     println(reference.zipWithValue(10)) // List((1, 10), (2, 10), (3, 10), (4, 10))
     println(reference.zipWithIndex) // List((1, 0), (2, 1), (3, 2), (4, 3))
-    println(reference.partition(_ % 2 == 0)) // (List(2, 4), List(1, 3))
+    println("partition = " + reference.partition(_ % 2 == 0)) // (List(2, 4), List(1, 3))
     println("span1 = " + reference.span(_ % 2 != 0)) // (List(1), List(2, 3, 4))
     println("span2 = " + reference.span(_ < 3)) // (List(1, 2), List(3, 4))
     println(reference.reduce(_ + _)) // 10
     println(List(10).reduce(_ + _)) // 10
     println("takeRight = " + reference.takeRight(3)) // List(2, 3, 4)
-    println(reference.collect { case x if x % 2 == 0 => x + 1 }) // List(3, 5)
+    println("collect = " + reference.collect { case x if x % 2 == 0 => x + 1 }) // List(3, 5)
